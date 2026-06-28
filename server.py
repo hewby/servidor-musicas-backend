@@ -7,6 +7,7 @@ app = Flask(__name__)
 CORS(app)
 
 pedidos = []
+excluidos = []
 
 @app.route("/pedido", methods=["POST"])
 def receber_pedido():
@@ -18,23 +19,33 @@ def receber_pedido():
         return jsonify({"mensagem": "Nome e link são obrigatórios."}), 400
 
     pedidos.append({
-    "id": str(uuid.uuid4()),
-    "nome": nome,
-    "link": link,
-    "data": datetime.now().strftime("%H:%M:%S")
-})
+        "id": str(uuid.uuid4()),
+        "nome": nome,
+        "link": link,
+        "data": datetime.now().strftime("%H:%M:%S")
+    })
 
     return jsonify({"mensagem": "Pedido recebido com sucesso."}), 200
+
 
 @app.route("/pedidos", methods=["GET"])
 def listar_pedidos():
     return jsonify(pedidos)
 
+
 @app.route("/pedido/<pid>", methods=["DELETE"])
 def deletar_pedido(pid):
-    global pedidos
+    global pedidos, excluidos
+
+    for p in pedidos:
+        if p["id"] == pid:
+            excluidos.append(p)
+            break
+
     pedidos = [p for p in pedidos if p["id"] != pid]
-    return jsonify({"mensagem": "Pedido removido."}), 200
+
+    return jsonify({"mensagem": "Pedido movido para excluídos"}), 200
+
 
 @app.route("/limpar_todos", methods=["POST"])
 def limpar_todos():
@@ -42,7 +53,20 @@ def limpar_todos():
     pedidos.clear()
     return jsonify({"mensagem": "Todos os pedidos foram removidos."}), 200
 
+
 @app.route("/limpar_invalidos", methods=["POST"])
 def limpar_invalidos():
-    return jsonify({"mensagem": "Sem inválidos (validação já é feita no envio)."}), 200
+    return jsonify({"mensagem": "Sem inválidos (validação já feita no envio)."}), 200
+
+
+@app.route("/excluidos", methods=["GET"])
+def listar_excluidos():
+    return jsonify(excluidos)
+
+
+@app.route("/limpar_excluidos", methods=["POST"])
+def limpar_excluidos():
+    global excluidos
+    excluidos.clear()
+    return jsonify({"mensagem": "Histórico limpo"}), 200
     
