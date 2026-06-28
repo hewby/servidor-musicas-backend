@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import uuid
 from datetime import datetime
+import pytz
 
 app = Flask(__name__)
 CORS(app)
@@ -22,7 +23,7 @@ def receber_pedido():
         "id": str(uuid.uuid4()),
         "nome": nome,
         "link": link,
-        "data": datetime.now().strftime("%H:%M:%S")
+        "data": datetime.now(pytz.timezone("America/Sao_Paulo")).strftime("%H:%M:%S")
     })
 
     return jsonify({"mensagem": "Pedido recebido com sucesso."}), 200
