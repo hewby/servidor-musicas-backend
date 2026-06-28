@@ -29,3 +29,20 @@ def receber_pedido():
 @app.route("/pedidos", methods=["GET"])
 def listar_pedidos():
     return jsonify(pedidos)
+
+@app.route("/pedido/<pid>", methods=["DELETE"])
+def deletar_pedido(pid):
+    global pedidos
+    pedidos = [p for p in pedidos if p["id"] != pid]
+    return jsonify({"mensagem": "Pedido removido."}), 200
+
+@app.route("/limpar_todos", methods=["POST"])
+def limpar_todos():
+    global pedidos
+    pedidos.clear()
+    return jsonify({"mensagem": "Todos os pedidos foram removidos."}), 200
+
+@app.route("/limpar_invalidos", methods=["POST"])
+def limpar_invalidos():
+    return jsonify({"mensagem": "Sem inválidos (validação já é feita no envio)."}), 200
+    
