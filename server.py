@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import uuid
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -15,7 +17,12 @@ def receber_pedido():
     if not nome or not link:
         return jsonify({"mensagem": "Nome e link são obrigatórios."}), 400
 
-    pedidos.append(f"{nome} te enviou uma música: {link}")
+    pedidos.append({
+    "id": str(uuid.uuid4()),
+    "nome": nome,
+    "link": link,
+    "data": datetime.now().strftime("%H:%M:%S")
+})
 
     return jsonify({"mensagem": "Pedido recebido com sucesso."}), 200
 
