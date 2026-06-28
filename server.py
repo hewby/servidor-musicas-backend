@@ -50,9 +50,12 @@ def deletar_pedido(pid):
 
 @app.route("/limpar_todos", methods=["POST"])
 def limpar_todos():
-    global pedidos
+    global pedidos, excluidos
+
+    excluidos.extend(pedidos)
     pedidos.clear()
-    return jsonify({"mensagem": "Todos os pedidos foram removidos."}), 200
+
+    return jsonify({"mensagem": "Todos os pedidos foram movidos para excluídos."}), 200
 
 
 @app.route("/limpar_invalidos", methods=["POST"])
