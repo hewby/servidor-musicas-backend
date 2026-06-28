@@ -28,4 +28,4 @@ def receber_pedido():
 
 @app.route("/pedidos", methods=["GET"])
 def listar_pedidos():
-    return jsonify({"pedidos": pedidos})
+    return jsonify(pedidos)
